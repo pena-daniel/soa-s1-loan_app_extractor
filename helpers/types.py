@@ -6,7 +6,7 @@ TypeOfExtraction = PyEnum("TypeOfExtraction", ["line", "block"])
 
 ClientId = Unicode(12, pattern="client-\d{3}", type_name="ClientId")  # type globale pour l'identifiant client
 
-NonNegativeDecimal = Decimal(min_inclusive=0, context=None)
+NonNegativeDecimal = Decimal(min_inclusive=0)
 NonNegativeInteger = Integer(min_inclusive=0)
 
     
