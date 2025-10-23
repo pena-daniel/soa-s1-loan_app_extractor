@@ -5,16 +5,19 @@ from spyne import Application, rpc, ServiceBase, Unicode,Fault
 from spyne.protocol.soap import Soap11
 from spyne.server.wsgi import WsgiApplication
 from helpers.Database import Database
+from types import ClientIdentity
 
 class ClientIdentityService(ServiceBase):
-    @rpc(Unicode, Unicode, _returns=Unicode)
+    @rpc(Unicode, Unicode, _returns=ClientIdentity)
     def get_client_identity(ctx, clientName, clientEmail):
         if not clientName or clientName.strip() == "":
             raise Fault(faultcode="Client.clientNameEmpty", faultstring="The clientName is not set or is empty.")
         try:
             logging.info(f"GetClientinformations called for {clientEmail} - {clientName}")
             client = Database.get_client_infos_by_name(clientName)
-            return json.dumps(client, ensure_ascii=False, indent=2)
+            if not client:
+                raise Fault(faultcode="Client.NotFound", faultstring=f"No client found with name {clientName}.")
+            return ClientIdentity(clientId=client['clientId'], address=client['address'])
         except Exception as e:
             logging.error(f"Error in get_client_identity service method: {e}")
             raise Fault(faultcode="Server.DatabaseError", faultstring=str(e))

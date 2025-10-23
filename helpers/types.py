@@ -31,19 +31,19 @@ class ClientIdentity(ComplexModel):
     clientId = ClientId
     address = Unicode
 
-class Financials(ComplexModel):
-    monthlyIncome = SpyneDecimal
-    monthlyExpenses = SpyneDecimal
+class FinancialsInfoType(ComplexModel):
+    monthlyIncome = Decimal
+    monthlyExpenses = Decimal
 
-class CreditHistory(ComplexModel):
-    debt = SpyneDecimal
+class CreditHistoryType(ComplexModel):
+    debt = Decimal
     latePayments = Integer
     hasBankruptcy = Boolean
 
 class CreditScoreType(ComplexModel):
     score = Integer
 
-class Explanations(ComplexModel):
+class ExplanationsType(ComplexModel):
     creditScoreExplanation = Unicode
     incomeVsExpensesExplanation = Unicode
     creditHistoryExplanation = Unicode
@@ -51,10 +51,10 @@ class Explanations(ComplexModel):
 class SolvencyReport(ComplexModel):
     name = Unicode
     identity = ClientIdentity
-    financials = Financials
-    creditHistory = CreditHistory
+    financials = FinancialsInfoType
+    creditHistory = CreditHistoryType
     creditScore = Integer
     solvencyStatus = Unicode
-    explanations = Explanations
+    explanations = ExplanationsType
     
 SolvencyStatusType = Enum('SOLVENT','NOT_SOLVENT', type_name='SolvencyStatus')

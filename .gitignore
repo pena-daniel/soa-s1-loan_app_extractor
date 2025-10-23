@@ -37,3 +37,6 @@ __pypackages__/
 *.ipynb
 *.txt
 */__init__.py
+*_test.py
+*_test_*.py
+test_*.py
