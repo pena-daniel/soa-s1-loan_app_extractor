@@ -2,16 +2,16 @@
 from helpers.server import APP_HOST
 import json
 import logging
-from spyne import Application, rpc, ServiceBase, Unicode,Fault, Integer, Decimal, Boolean
+from spyne import Application, rpc, ServiceBase, Unicode,Fault, Boolean
 from spyne.protocol.soap import Soap11
 from spyne.server.wsgi import WsgiApplication
 from helpers.Database import Database
-from helpers.types import CreditHistoryType
+from helpers.types import NonNegativeDecimal, NonNegativeInteger
 from helpers.helper import validate_client_id
 
 
 class ScoringService(ServiceBase):
-    @rpc(Unicode, Decimal, Integer, Boolean, _returns=Integer)
+    @rpc(Unicode, NonNegativeDecimal, NonNegativeInteger, Boolean, _returns=NonNegativeInteger)
     def calculate_credit_scrore(ctx, client_id, debt, late, hasBankruptcy):
         try:
             d = float(debt)
