@@ -43,5 +43,5 @@ scoring_app = Application(
 )
 
 SCORING_APP = WsgiApplication(scoring_app)
-SCORING_APP_PORT = 8006
+SCORING_APP_PORT = 8005
 SCORING_APP_CLIENT_URL = f'http://{APP_HOST}:{SCORING_APP_PORT}/'

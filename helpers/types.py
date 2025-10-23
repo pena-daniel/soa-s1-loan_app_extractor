@@ -48,7 +48,7 @@ class ExplanationsType(ComplexModel):
     incomeVsExpensesExplanation = Unicode
     creditHistoryExplanation = Unicode
 
-class SolvencyReport(ComplexModel):
+class SolvencyReportType(ComplexModel):
     name = Unicode
     identity = ClientIdentity
     financials = FinancialsInfoType

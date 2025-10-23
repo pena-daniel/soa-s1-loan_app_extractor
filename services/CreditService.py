@@ -38,5 +38,5 @@ application_credit_bureau = Application(
     out_protocol=Soap11()
 )
 CREDIT_BUREAU_APP_CLIENT = WsgiApplication(application_credit_bureau)
-CREDIT_BUREAU_APP_PORT = 8006
+CREDIT_BUREAU_APP_PORT = 8001
 CREDIT_BUREAU_APP_CLIENT_URL = f'http://{APP_HOST}:{CREDIT_BUREAU_APP_PORT}/'

@@ -7,7 +7,7 @@ from spyne.protocol.soap import Soap11
 from spyne.server.wsgi import WsgiApplication
 
 from helpers.server import APP_HOST
-from helpers.types import TextInfosServiceReturn, TypeOfExtraction
+from helpers.types import TypeOfExtraction
 
 
 
@@ -165,5 +165,5 @@ application_ex = Application(
 )
 
 SERVICE_APP_EXTRACTOR = WsgiApplication(application_ex)
-SERVICE_APP_EXTRACTOR_PORT = 8000
+SERVICE_APP_EXTRACTOR_PORT = 8006
 SERVICE_APP_EXTRACTOR_URL = f'http://{APP_HOST}:{SERVICE_APP_EXTRACTOR_PORT}/'

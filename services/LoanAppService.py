@@ -6,12 +6,19 @@ from spyne.server.wsgi import WsgiApplication
 from helpers.server import APP_HOST
 from services.ServiceExtractor import SERVICE_APP_EXTRACTOR_URL
 from services.ClientInfos import SERVICE_APP_CLIENT_INFO_URL
+from services.CreditService import CREDIT_BUREAU_APP_CLIENT_URL
+from services.ExplanantionService import EXPLANATION_APP_CLIENT_URL
+from services.FinancialDataService import FINANCE_APP_CLIENT_INFO_URL
+from services.ScoringService import SCORING_APP_CLIENT_URL
+from services.SolvacyService import SOLVACY_APP_CLIENT_URL
 from zeep import Client
 from zeep.helpers import serialize_object
+from requests import ConnectionError
+from helpers.types import SolvencyReportType
 
 # Service Web principal for loan expense analysis
 class LoanExpenseAnalyzer(ServiceBase):
-    @rpc(Unicode, _returns=Unicode)
+    @rpc(Unicode, _returns=SolvencyReportType)
     def analyze_loan_expense(ctx, content):
         try:
             if not content or content.strip() == "":
@@ -41,15 +48,55 @@ class LoanExpenseAnalyzer(ServiceBase):
             logging.info("Client informations retrieved for loan expense analysis")
             
             # get financial informations
-            finance_info_service = Client(f"{SERVICE_APP_CLIENT_INFO_URL}?wsdl")
+            finance_info_service = Client(f"{FINANCE_APP_CLIENT_INFO_URL}?wsdl")
             financial_infos = finance_info_service.service.get_financial_info(clients_infos.get("clientId"))      
             financial_info = serialize_object(financial_infos)
             
             
             # get credit history
-            credit_info_service = Client(f"{SERVICE_APP_CLIENT_INFO_URL}?wsdl")
+            credit_info_service = Client(f"{CREDIT_BUREAU_APP_CLIENT_URL}?wsdl")
             credit_history = credit_info_service.service.get_client_credit_history(clients_infos.get("clientId"))
             credit_info = serialize_object(credit_history)
+            
+            # solvacy info
+            solvacy_info_service = Client(f"{SOLVACY_APP_CLIENT_URL}?wsdl")
+            solvency_info = solvacy_info_service.service.calculate_solvacy(
+                clients_infos.get("clientId"),
+                financial_info.get("income"),
+                financial_info.get("expense"),
+                credit_info.get("debt")
+            )
+            logging.info("Solvency calculated for loan expense analysis")
+            
+            # get scoring service
+            scoring_service_client = Client(f"{SCORING_APP_CLIENT_URL}?wsdl")
+            
+            score = scoring_service_client.service.calculate_credit_scrore(
+                clients_infos.get("clientId"),
+                financial_info.get("income"),
+                financial_info.get("debt"),
+                credit_info.get("hasBankruptcy")
+            )
+            credit_info['score'] = score
+            
+            if not score:
+                raise Fault(faultcode="Server.NullResponse", faultstring="No scoring could be calculated for the client.")
+            
+            logging.info("Credit score calculated for loan expense analysis")
+            
+            # get explanation service
+            explanation_service_client = Client(f"{EXPLANATION_APP_CLIENT_URL}?wsdl")
+            explanations = explanation_service_client.service.get_explaination(
+                score,
+                financial_info.get("income"),
+                financial_info.get("expense"),
+                credit_info.get("debt"),
+                credit_info.get("latePayments"),
+                credit_info.get("hasBankruptcy")
+            )
+            credit_info['explanations'] = serialize_object(explanations)
+            
+            logging.info("Explanations retrieved for loan expense analysis")
             
             # analyze loan expense based on extracted info
             results = {
@@ -59,7 +106,15 @@ class LoanExpenseAnalyzer(ServiceBase):
                 "credit_history": credit_info
             }
             
-            return json.dumps(clients_infos+financial_info, ensure_ascii=False, indent=2)
+            return SolvencyReportType(
+                name=results["name"],
+                identity=clients_infos,
+                financials=financial_info,
+                creditHistory=credit_info,
+                creditScore=credit_info.get("score"),
+                solvencyStatus=solvency_info,
+                explanations=credit_info.get("explanations")
+            )
         
         except ConnectionError as ce:
             raise Fault(faultcode="Server.ConnectionError",
@@ -79,5 +134,5 @@ application_loan_expense = Application(
 )
 
 LOAN_EXPENSE_APP_EXTRACTOR = WsgiApplication(application_loan_expense)
-LOAN_EXPENSE_APP_PORT = 8001
+LOAN_EXPENSE_APP_PORT = 8004
 SERVICE_APP_LOAN_URL = f'http://{APP_HOST}:{LOAN_EXPENSE_APP_PORT}/'

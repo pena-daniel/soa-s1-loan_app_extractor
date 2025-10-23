@@ -37,5 +37,5 @@ application_fid = Application(
 )
 
 FINANCE_APP_CLIENT_INFO = WsgiApplication(application_fid)
-FINANCE_APP_PORT = 8005
+FINANCE_APP_PORT = 8003
 FINANCE_APP_CLIENT_INFO_URL = f'http://{APP_HOST}:{FINANCE_APP_PORT}/'
