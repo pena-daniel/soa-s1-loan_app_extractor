@@ -7,6 +7,7 @@ from helpers.server import APP_HOST
 from services.ServiceExtractor import SERVICE_APP_EXTRACTOR_URL
 from services.ClientInfos import SERVICE_APP_CLIENT_INFO_URL
 from zeep import Client
+from zeep.helpers import serialize_object
 
 # Service Web principal for loan expense analysis
 class LoanExpenseAnalyzer(ServiceBase):
@@ -23,21 +24,42 @@ class LoanExpenseAnalyzer(ServiceBase):
             if not extracted_infos:
                 raise Fault(faultcode="Server.NullResponse", faultstring="No information could be extracted from the provided content.")
         
+            extracted_infos = json.loads(extracted_infos)
+            
             logging.info("Infos extracted for loan expense analysis")
             
             # get client informations
             client_info_service = Client(f"{SERVICE_APP_CLIENT_INFO_URL}?wsdl")
-            extracted_infos = json.loads(extracted_infos)
             clients_infos = client_info_service.service.get_client_identity(extracted_infos.get("client_name"), extracted_infos.get("email"))
             
             # check if i have a returned value
             if not clients_infos:
                 raise Fault(faultcode="Server.NullResponse", faultstring="No client information found for the extracted client name.")
             
+            clients_infos = serialize_object(clients_infos)
+            
             logging.info("Client informations retrieved for loan expense analysis")
             
+            # get financial informations
+            finance_info_service = Client(f"{SERVICE_APP_CLIENT_INFO_URL}?wsdl")
+            financial_infos = finance_info_service.service.get_financial_info(clients_infos.get("clientId"))      
+            financial_info = serialize_object(financial_infos)
+            
+            
+            # get credit history
+            credit_info_service = Client(f"{SERVICE_APP_CLIENT_INFO_URL}?wsdl")
+            credit_history = credit_info_service.service.get_client_credit_history(clients_infos.get("clientId"))
+            credit_info = serialize_object(credit_history)
+            
             # analyze loan expense based on extracted info
-            return json.dumps(clients_infos, ensure_ascii=False, indent=2)
+            results = {
+                "client_id": clients_infos.get("clientId"),
+                "name": extracted_infos.get("client_name"),
+                "finances_history": financial_info,
+                "credit_history": credit_info
+            }
+            
+            return json.dumps(clients_infos+financial_info, ensure_ascii=False, indent=2)
         
         except ConnectionError as ce:
             raise Fault(faultcode="Server.ConnectionError",
