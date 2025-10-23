@@ -1,10 +1,10 @@
 import logging
 from helpers.server import APP_HOST, runService
-from services.FinancialDataService import FINANCE_APP_PORT, FINANCE_APP_CLIENT_INFO
+from services.CreditService import CREDIT_BUREAU_APP_PORT, CREDIT_BUREAU_APP_CLIENT
 
 # global logging configuration
 logging.basicConfig(level=logging.INFO)
 
 if __name__ == '__main__':
     # Serveur WSGI for InfoExtractor service
-    runService("InfoFinance", APP_HOST, FINANCE_APP_PORT, FINANCE_APP_CLIENT_INFO)
+    runService("CreditInfo", APP_HOST, CREDIT_BUREAU_APP_PORT, CREDIT_BUREAU_APP_CLIENT)

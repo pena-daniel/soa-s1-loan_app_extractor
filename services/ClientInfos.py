@@ -5,7 +5,7 @@ from spyne import Application, rpc, ServiceBase, Unicode,Fault
 from spyne.protocol.soap import Soap11
 from spyne.server.wsgi import WsgiApplication
 from helpers.Database import Database
-from types import ClientIdentity
+from helpers.types import ClientIdentity
 
 class ClientIdentityService(ServiceBase):
     @rpc(Unicode, Unicode, _returns=ClientIdentity)

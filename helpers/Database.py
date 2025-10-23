@@ -48,19 +48,19 @@ CREDITS = [
     {
         "client_id": "client-001",
         "debt": 20000,
-        "late": False,
+        "late": 2,
         "bankruptcy": False
     },
     {
         "client_id": "client-002",
         "debt": 15000,
-        "late": True,
+        "late": 0,
         "bankruptcy": False
     },
     {
         "client_id": "client-003",
         "debt": 30000,
-        "late": False,
+        "late": 5,
         "bankruptcy": True
     }
 ]
