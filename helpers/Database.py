@@ -30,36 +30,36 @@ CLIENTS = [
 FINANCES = [
     {
         "client_id": "client-001",
-        "income": 5000,
+        "income": 4000,
         "expenses": 3000
     },
     {
         "client_id": "client-002",
-        "income": 4500,
+        "income": 3000,
         "expenses": 2500,
     },
     {
         "client_id": "client-003",
         "income": 6000,
-        "expenses": 3500
+        "expenses": 5500
     }
 ]
 CREDITS = [
     {
         "client_id": "client-001",
-        "debt": 20000,
+        "debt": 5000,
         "late": 2,
         "bankruptcy": False
     },
     {
         "client_id": "client-002",
-        "debt": 15000,
+        "debt": 2000,
         "late": 0,
         "bankruptcy": False
     },
     {
         "client_id": "client-003",
-        "debt": 30000,
+        "debt": 10000,
         "late": 5,
         "bankruptcy": True
     }

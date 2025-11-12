@@ -65,7 +65,7 @@ class ContentBlockExtractor:
             resultat["email"] = em.group(0)
 
         # 3. Téléphone
-        tel_regex = r"(\+?\d{1,3}[\s\.\-]?\(?\d{1,4}\)?[\s\.\-]?\d{1,4}[\s\.\-]?\d{2,4}[\s\.\-]?\d{2,4})"
+        tel_regex = r"(\+?\d[\d\s\.\-]{8,}\d)"
         t = re.search(tel_regex, texte)
         if t:
             resultat["phone_numer"] = t.group(0)

@@ -17,7 +17,7 @@ class ClientIdentityService(ServiceBase):
             client = Database.get_client_infos_by_name(clientName)
             if not client:
                 raise Fault(faultcode="Client.NotFound", faultstring=f"No client found with name {clientName}.")
-            return ClientIdentity(clientId=client['clientId'], address=client['address'])
+            return ClientIdentity(clientId=client['client_id'], address=client['adresse'])
         except Exception as e:
             logging.error(f"Error in get_client_identity service method: {e}")
             raise Fault(faultcode="Server.DatabaseError", faultstring=str(e))

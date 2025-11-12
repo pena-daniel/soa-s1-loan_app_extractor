@@ -10,7 +10,7 @@ from helpers.helper import validate_client_id
 
 
 class SolvacyService(ServiceBase):
-    @rpc(Unicode, NonNegativeDecimal, NonNegativeDecimal, NonNegativeInteger, _returns=SolvencyStatusType)
+    @rpc(Unicode, NonNegativeDecimal, NonNegativeDecimal, Decimal, _returns=SolvencyStatusType)
     def calculate_solvacy(ctx, client_id, income, expence, score):
         
         try:

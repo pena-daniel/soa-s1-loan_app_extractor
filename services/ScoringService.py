@@ -13,6 +13,7 @@ from helpers.helper import validate_client_id
 class ScoringService(ServiceBase):
     @rpc(Unicode, NonNegativeDecimal, NonNegativeInteger, Boolean, _returns=NonNegativeInteger)
     def calculate_credit_scrore(ctx, client_id, debt, late, hasBankruptcy):
+        print(debt, late, hasBankruptcy)
         try:
             d = float(debt)
         except:
@@ -25,8 +26,9 @@ class ScoringService(ServiceBase):
             if validate_client_id(client_id) is not None:
                 raise Fault(faultcode="Client.ValidationError", faultstring=f"client_id '{client_id}' invalide. Pattern attendu: client-\\d{{3}}")
             
-            score_float = 1000.0 - 0.1 * d - 50.0 * int(late) - (200.0 if bool(hasBankruptcy) else 0.0)
+            score_float = 1000.0 - 0.1 * d - 50.0 * int(late) - (200.0 if hasBankruptcy == True else 0.0)
             score_int = int(round(score_float))
+            print(score_int)
             
             return score_int
             

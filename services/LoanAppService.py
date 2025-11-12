@@ -58,25 +58,17 @@ class LoanExpenseAnalyzer(ServiceBase):
             credit_history = credit_info_service.service.get_client_credit_history(clients_infos.get("clientId"))
             credit_info = serialize_object(credit_history)
             
-            # solvacy info
-            solvacy_info_service = Client(f"{SOLVACY_APP_CLIENT_URL}?wsdl")
-            solvency_info = solvacy_info_service.service.calculate_solvacy(
-                clients_infos.get("clientId"),
-                financial_info.get("income"),
-                financial_info.get("expense"),
-                credit_info.get("debt")
-            )
-            logging.info("Solvency calculated for loan expense analysis")
             
             # get scoring service
             scoring_service_client = Client(f"{SCORING_APP_CLIENT_URL}?wsdl")
             
             score = scoring_service_client.service.calculate_credit_scrore(
                 clients_infos.get("clientId"),
-                financial_info.get("income"),
-                financial_info.get("debt"),
+                credit_info.get("debt"),
+                credit_info.get("latePayments"),
                 credit_info.get("hasBankruptcy")
             )
+            score = serialize_object(score)
             credit_info['score'] = score
             
             if not score:
@@ -84,12 +76,23 @@ class LoanExpenseAnalyzer(ServiceBase):
             
             logging.info("Credit score calculated for loan expense analysis")
             
+                        # solvacy info
+            solvacy_info_service = Client(f"{SOLVACY_APP_CLIENT_URL}?wsdl")
+            solvency_info = solvacy_info_service.service.calculate_solvacy(
+                clients_infos.get("clientId"),
+                financial_info.get("monthlyIncome"),
+                financial_info.get("monthlyExpenses"),
+                credit_info.get("score")
+            )
+            solvency_info = serialize_object(solvency_info)
+            logging.info("Solvency calculated for loan expense analysis")
+            
             # get explanation service
             explanation_service_client = Client(f"{EXPLANATION_APP_CLIENT_URL}?wsdl")
             explanations = explanation_service_client.service.get_explaination(
-                score,
-                financial_info.get("income"),
-                financial_info.get("expense"),
+                credit_info.get("score"),
+                financial_info.get("monthlyIncome"),
+                financial_info.get("monthlyExpenses"),
                 credit_info.get("debt"),
                 credit_info.get("latePayments"),
                 credit_info.get("hasBankruptcy")

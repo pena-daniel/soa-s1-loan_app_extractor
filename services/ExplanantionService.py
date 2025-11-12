@@ -9,7 +9,7 @@ from helpers.types import SolvencyStatusType,NonNegativeDecimal, NonNegativeInte
 from helpers.helper import validate_client_id
 
 class ExplanationService(ServiceBase):
-    @rpc(NonNegativeInteger, NonNegativeDecimal, NonNegativeDecimal, NonNegativeDecimal, NonNegativeDecimal, Boolean, _returns=ExplanationsType)
+    @rpc(Decimal, NonNegativeInteger, NonNegativeDecimal, NonNegativeDecimal, NonNegativeDecimal, Boolean, _returns=ExplanationsType)
     def get_explaination(ctx, score, income, expence, debt, late, hasBankruptcy):
         
         try:
@@ -24,12 +24,12 @@ class ExplanationService(ServiceBase):
             raise Fault(faultcode="Client.ValidationError", faultstring="Invalid numeric inputs for decision")
         
         try:
-            if income < 0 or expenses < 0 or debt < 0 or score < 0:
+            if income < 0 or expenses < 0 or debt < 0:
                 raise Fault(faultcode="Client.ValidationError", faultstring="Numeric inputs must be >= 0")
             
             # simple explanation logic
-            cs = "excellent" if score >= 800 else ("acceptable" if score >= 650 else "poor")
-            creditScoreExplanation = f"Credit score of {score} is considered {cs}."
+            cs = "excellent" if sc >= 800 else ("acceptable" if sc >= 650 else "poor")
+            creditScoreExplanation = f"Credit score of {sc} is considered {cs}."
             # incomes and expense explanation for the report
             in_explanation = "your income exceeds your expenses." if income > expenses else "your expenses exceed your income."
             incomeVsExpensesExplanation = f"{in_explanation} Income = {income}, Expenses = {expenses}."
