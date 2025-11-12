@@ -24,9 +24,11 @@ python -m spacy download en_core_web_md
 
 ## 3️⃣ Installation
 
-git clone <repo-url>
-cd <project-folder>
+```bash
+git clone https://github.com/pena-daniel/soa-s1-loan_app_extractor
+cd soa-s1-loan_app_extractor
 pip install -r requirements.txt
+```
 
 ## 4️⃣ Lancement
 
