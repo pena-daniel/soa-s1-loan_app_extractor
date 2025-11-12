@@ -4,6 +4,7 @@ __pycache__/
 *.pyc
 instance/
 tests/__pycache__/
+test/__pycache__/
 *.pyo
 *.pyd
 *.db
@@ -36,7 +37,3 @@ __pypackages__/
 *.manifest
 *.ipynb
 *.txt
-*/__init__.py
-*_test.py
-*_test_*.py
-test_*.py
